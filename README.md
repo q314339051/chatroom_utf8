@@ -33,6 +33,9 @@
         
     4.数据库设计：
         用户信息表user
-        聊天记录表hist
+        聊天记录表chat_history
+        好友表:friends
+        聊天室:rooms
+        聊天室用户:room_user
         
         
