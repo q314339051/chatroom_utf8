@@ -5,11 +5,13 @@
   客户端：
 
 创建连接
-def tcp_socket():
 
-def login():
 
-def register():
+    def tcp_socket():
+
+    def login():
+
+    def register():
 
 配置文件：config.py
 
@@ -18,3 +20,7 @@ def register():
 def tcp_socket():
 
 def require():
+
+
+
+聊天／加好友／创建群／
