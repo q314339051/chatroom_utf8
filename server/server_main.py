@@ -10,6 +10,9 @@ import pymysql
 import signal
 from multiprocessing import Process 
 from connfig import *
+from sql_deal import *
+
+
 
 
 class Server(object):
@@ -26,15 +29,6 @@ class Server(object):
         s.bind((SERVER_IP,PORT))
         s.listen(5)
         return s
-    
-    def sql_connect(self,table):
-        """
-            连接数据库
-        """
-        db = pymysql.connect(('localhost', 'root', '123456', '%s',charset = 'utf8') % table)
-        
-        return db 
-
 
     def main():
         s = create_socket()
@@ -55,9 +49,13 @@ class Server(object):
             pid = os.fork()
             if pid == 0:
                 s.close()
-                do_request(c, db)  # 处理客户端请求
+                do_request(c)  # 处理客户端请求
                 sys.exit()
             else:
                 c.close()
+
+
+    def do_request(c):
+        
 
 
