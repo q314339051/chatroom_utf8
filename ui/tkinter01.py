@@ -13,7 +13,7 @@ def register_window():
     # 设置窗口大小固定
     win1.resizable(0, 0)
     # 设置窗口背景图
-    photo = tkinter.PhotoImage(file="天空背景.gif")
+    photo = tkinter.PhotoImage(file="backgr.gif")
     label = tkinter.Label(win1, image=photo)  # 图片
     label.pack()
     # 创建账号密码标签
@@ -41,7 +41,7 @@ def login_window():
     # 设置窗口大小固定
     tk.resizable(0, 0)
     # 设置窗口背景图
-    photo = tkinter.PhotoImage(file="天空背景.gif")
+    photo = tkinter.PhotoImage(file="backgr.gif")
     label = tkinter.Label(tk, image=photo)  # 图片
     label.pack()
     # 创建账号密码标签
