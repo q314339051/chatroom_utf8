@@ -11,6 +11,7 @@ import signal
 from multiprocessing import Process 
 from connfig import *
 from sql_deal import *
+from response import *
 
 
 
@@ -30,7 +31,7 @@ class Server(object):
         s.listen(5)
         return s
 
-    def main():
+    def main(self):
         s = create_socket()
         # 处理僵尸进程
         signal.signal(signal.SIGCHLD, signal.SIG_IGN)
@@ -55,7 +56,43 @@ class Server(object):
                 c.close()
 
 
-    def do_request(c):
+def do_request(c):
+    """
+        服务端接收请求处理
+    """
+    while True:
+        data,addr = c.recvfrom(1024)
+        msgList = data.decode().split(' ')
+        # 区分请求类型
+        if msgList[0] == 'L':
+            # 登录请求
+            Do_login(c,msgList[1],addr)
+
+        elif msgList[0] =='R':
+            # 注册请求
+            do_register()
+
+        elif msgList[0] =='F':
+            # 添加好友请求
+            do_joinfriend()
+
+        elif msgList[0] =='C':
+            # 创建群聊房间
+            do_create_romm()
+
+        elif msgList[0] == 'M':
+            # 私聊
+            text = ' '.join(msgList[2:])
+            do_priv_chat(s,msgList[1],text)
+
+        elif msgList[0] == 'N':
+            # 群聊
+            text = ' '.join(msgList[2:])
+            do_group_chat(s,msgList[1],text)
+
+        elif msgList[0] == 'Q':
+            # 处理用户退出
+            do_quit(s,msgList[1])
         
 
 

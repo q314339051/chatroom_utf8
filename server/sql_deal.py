@@ -28,6 +28,7 @@ class DBhelper:
             print(e)
         else:
             print("连接数据库成功")
+        return True
 
     def close_conn(self):
         """
@@ -41,3 +42,19 @@ class DBhelper:
             print(e)
         else:
             print("关闭数据库成功")
+
+
+    def commit():
+
+         self.db_conn.commit()
+
+
+def get_user(user_id):
+    fields = ['id', 'username', 'nickname']
+    row = c.execute('SELECT ' + ','.join(fields) + ' FROM users WHERE id=?', [user_id]).fetchall()
+    if len(row) == 0:
+        return None
+    else:
+        user = dict(zip(fields, row[0]))
+        user['online'] = user_id in user_id_to_sc
+        return user
