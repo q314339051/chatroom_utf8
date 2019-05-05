@@ -15,7 +15,6 @@ from response import *
 
 
 
-
 class Server(object):
 
     def __init__(self):
