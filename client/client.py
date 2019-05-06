@@ -4,3 +4,5 @@
     env:python3.5
     exc:for socket and Procrss and Thread
 """
+from socket import *
+
