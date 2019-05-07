@@ -5,4 +5,5 @@
     exc:for socket and Procrss and Thread
 """
 from socket import *
+from threading import Thread
 
