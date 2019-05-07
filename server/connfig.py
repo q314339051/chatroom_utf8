@@ -13,6 +13,6 @@ class DbConf:
         self.host = "localhost"  # 服务器地址127.0.0.1
         self.user = "root"  # 连接数据库的用户名
         self.passwd = "123456"  # 密码
-        self.dbname = "eshop"  # 连接哪一个库
+        self.dbname = "chat"  # 连接哪一个库
 
         
