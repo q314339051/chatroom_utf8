@@ -10,15 +10,16 @@ import pymysql
 import signal
 from multiprocessing import Process 
 from connfig import *
-from sql_deal import *
+from sql_db import *
 from response import *
+import json
 
 
 
 class Server(object):
 
     def __init__(self):
-        pass
+        slef.response = Response()
 
     def create_socket(self):
         """
@@ -31,7 +32,11 @@ class Server(object):
         return s
 
     def main(self):
+        # 创建套接字
         s = create_socket()
+        # 数据库初始化
+        ConnSql.sql_init()
+        
         # 处理僵尸进程
         signal.signal(signal.SIGCHLD, signal.SIG_IGN)
 
@@ -61,35 +66,34 @@ def do_request(c):
     """
     while True:
         data,addr = c.recvfrom(1024)
-        msgList = data.decode().split(' ')
+        request = json.loads(data)
         # 区分请求类型
-        if msgList[0] == 'L':
+        if request['style'] == 'L':
             # 登录请求
-            Do_login(c,msgList[1],addr)
-
-        elif msgList[0] =='R':
+            self.response.do_login(c,request,addr)
+        elif request['style'] =='R':
             # 注册请求
-            do_register()
+            self.response.do_register(c,request,addr)
 
-        elif msgList[0] =='F':
+        elif request['style'] =='F':
             # 添加好友请求
-            do_joinfriend()
+            do_joinfriend(c,request,addr)
 
-        elif msgList[0] =='C':
+        elif request['style'] =='C':
             # 创建群聊房间
-            do_create_romm()
+            do_create_romm(c,request,addr)
 
-        elif msgList[0] == 'M':
+        elif request['style'] == 'M':
             # 私聊
             text = ' '.join(msgList[2:])
             do_priv_chat(s,msgList[1],text)
 
-        elif msgList[0] == 'N':
+        elif request['style'] == 'N':
             # 群聊
             text = ' '.join(msgList[2:])
             do_group_chat(s,msgList[1],text)
 
-        elif msgList[0] == 'Q':
+        elif request['style'] == 'Q':
             # 处理用户退出
             do_quit(s,msgList[1])
         

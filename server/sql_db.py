@@ -3,7 +3,7 @@
 """
 from connfig import *
 import pymysql
-
+import sys
 
 """
     开始服务器后，先判断是否存在chat数据库,
@@ -12,10 +12,24 @@ import pymysql
     如果chat数据库不存在，则创建chat数据库，然后建立表
 
 """
-class ConnSql:
+class ConnSql(object):
     def __init__(self):
         self.db_conf = DbConf()
 
+
+    # @staticmethod
+    def sql_init(self):
+        """
+            初始化数据库
+        """
+        self.open_conn()
+        re = self.create_chatdb()
+        if re == True:
+            self.create_user_tb()
+            # self.create_his_tb()
+        else:
+            print("存在数据库chat，请检查数据库是否正确")
+            
 
     def open_conn(self):
         """
@@ -28,18 +42,20 @@ class ConnSql:
                                            charset='utf8')
         except Exception as e:
             print("连接数据库错误")
-            return False
             print(e)
-        else:
-            print("连接数据库成功")
+            sys.exit("数据库连接失败，程序退出")
+            
+        # else:
+        #     print("连接数据库成功")
+
+        # 创建游标
+        self.cur = self.db_conn.cursor()
         return True
 
-    def visit_chatdb(self):
+    def create_chatdb(self):
         """
             访问或创建chat库
         """
-        # 创建游标
-        self.cur = self.db_conn.cursor()
         try:
             self.cur.execute("create database chat default charset=utf8")
         except Exception as e:
@@ -47,11 +63,56 @@ class ConnSql:
             return False
         else:
             print("创建chat成功")
-        return False
+            return True
 
-    def create_user_db(self):
+    def create_user_tb(self):
+        """
+            创建用户表
+        """
+        # 进入chat数据库
+        self.cur.execute("use chat;")
+        # print("进入数据库成功")
+        sql = "create table user (id int auto_increment,uid int primary key,uname varchar(32) not null,passwd varchar(32) not null);"
+        # 创建user表
+        self.cur.execute(sql)
+        print("创建user表成功")
+        return True
+
+    def create_his_tb(self):
+        """
+            创建历史记录
+        """
+        pass
+
+    def insert_user(self,uid,uname,passwd):
+        """
+            创建用户
+        """
+        sql = "insert into user (uid ,uname,passwd) values ('%s','%s')"%(uid,uname,passwd)
+        try:
+            self.cur.execute(sql)
+            self.db_conn.commit()
+            return True
+        except:
+            self.db_conn.rollback()
+            return False
+
         
+    def query_user_by_name(self,uid):
+        """
+            查询用户表
+        """
+        sql = "select * from user where uid = '%s'"%uid
+        self.cur.execute(sql)
+        r = self.cur.fetchone()
+        if r != None:
+            return False
+        else:
+            return True
 
+    
+
+    
 
 
 
@@ -59,8 +120,8 @@ class ConnSql:
 
 if __name__ == '__main__':
     db = ConnSql()
-    db.open_conn()
-    db.visit_chatdb()
+    db.sql_init()
+    
 
 
 

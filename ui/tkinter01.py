@@ -55,6 +55,7 @@ def login_window():
     tkinter.Entry(tk, show="*", textvariable=sheet_text2).place(x=110, y=80)
     # 创建按钮
     tkinter.Button(tk, text="登录", command=None).place(x=200, y=130)
+    
     # 循环
     tk.mainloop()
 
@@ -69,5 +70,6 @@ def main_window():
 
 
 login_window()
+sheet_text1.get()
 # register_window()
 # main_window()
