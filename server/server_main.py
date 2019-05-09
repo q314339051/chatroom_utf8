@@ -19,6 +19,9 @@ import json
 class Server(object):
 
     def __init__(self):
+        # 运行main
+        self.main()
+        # 实例化响应对象
         slef.response = Response()
 
     def create_socket(self):
@@ -59,42 +62,44 @@ class Server(object):
             else:
                 c.close()
 
+    @staticmethod
+    def do_request(c):
+        """
+            服务端接收请求处理
+        """
+        while True:
+            data,addr = c.recvfrom(1024)
+            request = json.loads(data)
+            # 区分请求类型
+            if request['style'] == 'Q':
+                # 处理用户退出
+                c.close()
+                return
+            elif request['style'] == 'L':
+                # 登录请求
+                self.response.do_login(c,request,addr)
+            elif request['style'] =='R':
+                # 注册请求
+                self.response.do_register(c,request,addr)
+            elif request['style'] =='F':
+                # 添加好友请求
+                do_joinfriend(c,request,addr)
 
-def do_request(c):
-    """
-        服务端接收请求处理
-    """
-    while True:
-        data,addr = c.recvfrom(1024)
-        request = json.loads(data)
-        # 区分请求类型
-        if request['style'] == 'L':
-            # 登录请求
-            self.response.do_login(c,request,addr)
-        elif request['style'] =='R':
-            # 注册请求
-            self.response.do_register(c,request,addr)
-        elif request['style'] =='F':
-            # 添加好友请求
-            do_joinfriend(c,request,addr)
+            elif request['style'] =='C':
+                # 创建群聊房间
+                do_create_romm(c,request,addr)
 
-        elif request['style'] =='C':
-            # 创建群聊房间
-            do_create_romm(c,request,addr)
+            elif request['style'] == 'M':
+                # 私聊
+                do_priv_chat(c,request,addr)
 
-        elif request['style'] == 'M':
-            # 私聊
-            text = ' '.join(msgList[2:])
-            do_priv_chat(s,msgList[1],text)
+            elif request['style'] == 'N':
+                # 群聊
+                text = ' '.join(msgList[2:])
+                do_group_chat(s,msgList[1],text)
 
-        elif request['style'] == 'N':
-            # 群聊
-            text = ' '.join(msgList[2:])
-            do_group_chat(s,msgList[1],text)
-
-        elif request['style'] == 'Q':
-            # 处理用户退出
-            do_quit(s,msgList[1])
+        
         
 
-
+if __name__ == '__main__':
+    run = Server()

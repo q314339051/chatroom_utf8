@@ -45,6 +45,13 @@ class Response(object):
         else:
             c.send("账号已存在".encode())
 
+    def do_do_joinfriend(self,c,request,addr):
+        """
+            处理用户添加好友请求
+        """
+        
+
+
 
         
 

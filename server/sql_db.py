@@ -127,7 +127,6 @@ class ConnSql(object):
 
 
 
-
 if __name__ == '__main__':
     db = ConnSql()
     db.sql_init()

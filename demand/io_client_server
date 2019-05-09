@@ -27,7 +27,7 @@
             通信：
                 使用json进行客户端与服务端请求交互
                 eg:
-                msg = {'style':'R','uid':'138000000','upwd':'11112222','uname':'jack'}
+                msg = {'style':'R','uid':'138000000','uname':'jack'，'upwd':'11112222',}
 
     登录模块：
         需求

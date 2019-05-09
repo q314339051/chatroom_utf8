@@ -3,11 +3,11 @@
 “”“
 
 
-    用户：
+    用户表：
             user 
-        用户id:
-        用户name:
-        用户passwd:
+        用户账号:uid
+        用户名:uname
+        用户密码:upwd
 
     历史记录表：
             chat_history
