@@ -31,7 +31,7 @@ class Response(object):
         """
         uid = request["uid"]
         res = self.sql.query_user_by_name(uid):
-        if res == False:
+        if res == True:
             c.send(b'OK')
             uname = request['uname']
             passwd = request['uspwd']
