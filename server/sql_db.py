@@ -8,7 +8,6 @@ import sys
 """
     开始服务器后，先判断是否存在chat数据库,
     如果存在，则创建表，如果表存在，则返回ok
-
     如果chat数据库不存在，则创建chat数据库，然后建立表
 
 """
@@ -72,7 +71,8 @@ class ConnSql(object):
         # 进入chat数据库
         self.cur.execute("use chat;")
         # print("进入数据库成功")
-        sql = "create table user (id int auto_increment,uid int primary key,uname varchar(32) not null,passwd varchar(32) not null);"
+        sql = """create table user (id int primary key auto_increment,uid varchar(32) not 
+        null ,uname varchar(32) not null,upwd varchar(32) not null);"""
         # 创建user表
         self.cur.execute(sql)
         print("创建user表成功")
@@ -84,11 +84,11 @@ class ConnSql(object):
         """
         pass
 
-    def insert_user(self,uid,uname,passwd):
+    def insert_user(self,uid,uname,upwd):
         """
             创建用户
         """
-        sql = "insert into user (uid ,uname,passwd) values ('%s','%s')"%(uid,uname,passwd)
+        sql = "insert into user (uid ,uname,upwd) values ('%s','%s')"%(uid,uname,upwd)
         try:
             self.cur.execute(sql)
             self.db_conn.commit()
@@ -110,9 +110,19 @@ class ConnSql(object):
         else:
             return True
 
-    
+    def verify_login(self,uid,upwd):
+        """
+            验证用户登录
+        """
+        sql = "select * from user where uid = '%s' and upwd = '%s'" %(uid,upwd)
+        self.cur.execute(sql)
+        r = self.cur.fetchone()
+        if r != None:
+            return True
+        else:
+            return False
 
-    
+
 
 
 

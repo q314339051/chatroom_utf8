@@ -36,7 +36,7 @@ class Server(object):
         s = create_socket()
         # 数据库初始化
         ConnSql.sql_init()
-        
+
         # 处理僵尸进程
         signal.signal(signal.SIGCHLD, signal.SIG_IGN)
 
@@ -74,7 +74,6 @@ def do_request(c):
         elif request['style'] =='R':
             # 注册请求
             self.response.do_register(c,request,addr)
-
         elif request['style'] =='F':
             # 添加好友请求
             do_joinfriend(c,request,addr)
