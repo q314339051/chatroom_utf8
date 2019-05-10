@@ -6,7 +6,6 @@ from tkinter import ttk
 class Application:
     def __init__(self, master):
         self.root = master
-
         # 窗口大小
         self.root.geometry("350x200")
         # 设置窗口标题
@@ -14,11 +13,10 @@ class Application:
         # 设置窗口不可变
         self.root.resizable(0, 0)
         self.login_window()
-        self.win = None
 
     def login_window(self):  # 创建登录窗口
         # 设置窗口背景图
-        self.photo = PhotoImage(file="backgr.gif")
+        self.photo = PhotoImage(file="b.png")
         self.label = Label(self.root, image=self.photo)
         self.label.pack()
 
@@ -46,7 +44,7 @@ class Application:
         # 设置窗口标题
         self.reg.title("注册")
         # 设置窗口背景图
-        photo = PhotoImage(file="backgr.gif")
+        photo = PhotoImage(file="b.png")
         label = Label(self.reg, image=photo)  # 图片
         label.pack()
         # 创建账号密码标签
@@ -106,7 +104,7 @@ class MainWindow:
         # 创建主窗口
         self.root = Tk()
         # 窗口大小
-        self.root.geometry("260x500")
+        self.root.geometry("260x600")
         # 设置窗口标题
         self.root.title("主窗口")
 
@@ -114,7 +112,17 @@ class MainWindow:
         self.start()
 
     def start(self):
-        tree = ttk.Treeview(self.root, height=20)
+
+        self.photo = PhotoImage(file="timg.png")
+        a = Frame(self.root, width=500, height=600, bg=self.photo)
+        a.pack()
+        # # 设置窗口背景图
+        # self.photo = PhotoImage(file="timg.png")
+        # self.label = Label(in_=a, image=self.photo)
+        # self.label.pack()
+        # text1 = Text(self.root)
+        # text1.place(in_=a, width=500, height=300)
+        tree = ttk.Treeview(in_=a, height=20)
         tree.pack()
         treeF1 = tree.insert("", 0, text="我的好友", values=("我的好友"))
         treeF2 = tree.insert("", 1, text="最近联系", values=("最近联系"))
@@ -140,12 +148,12 @@ class MainWindow:
         # print("you clicked on ", tree.item(item, "values"))
         # print(tree.item(item, "values")[0])
 
-    def window_exist(self,name): # 判断窗口是否已创建
-        # 如果该窗口存在，则不创建
+    def window_exist(self, name):  # 判断窗口是否已存在
+        # 如果窗口存在，则显示该窗口
         if name in self.dict:
-            # 显示已经打开窗口
             self.dict[name].deiconify()
             return True
+
     def chat_window(self, name):  # 创建聊天窗口
         # 判断窗口是否已存在
         if self.window_exist(name):
@@ -161,25 +169,26 @@ class MainWindow:
         # 设置窗口标题
         self.chat.title("与%s聊天" % name)
         # 聊天信息块
-        a = Frame(self.chat, width=500, height=300, bg="green")
-        a.pack()
+        message_block = Frame(self.chat, width=500, height=300, bg="green")
+        message_block.pack()
         text1 = Text(self.chat, )
-        text1.place(in_=a, width=500, height=300)
+        text1.place(in_=message_block, width=500, height=300)
         # 发送信息块
-        b = Frame(self.chat, width=500, height=100, bg="red")
-        b.pack()
+        send_block = Frame(self.chat, width=500, height=100, bg="red")
+        send_block.pack()
         text2 = Text(self.chat, )
-        text2.place(in_=b, width=500, height=100)
+        text2.place(in_=send_block, width=500, height=100)
         # 发送按钮
-        Button(self.chat, text="发送", command=lambda: self.recv_message(text1,text2.get("1.0",END))).place(x=450, y=400)
+        Button(self.chat, text="发送", command=lambda: self.recv_message(text1, text2.get("1.0", END))).place(x=450,
+                                                                                                            y=400)
         # 更新聊天信息
-        self.recv_message(text1,"3546843")
+        self.recv_message(text1, "3546843")
 
         # 点击关闭按钮触发事件
         self.chat.protocol("WM_DELETE_WINDOW", lambda: self.close_window(name=name))
         self.chat.mainloop()
 
-    def recv_message(self, text,msg):  # 接收信息
+    def recv_message(self, text, msg):  # 接收信息
         text.config(state=NORMAL)
         # 显示信息
         text.insert(END, msg)
