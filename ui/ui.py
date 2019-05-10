@@ -2,7 +2,6 @@ from tkinter import *
 from tkinter import ttk
 
 
-
 class Application:
     def __init__(self, master):
         self.root = master
@@ -112,17 +111,17 @@ class MainWindow:
         self.start()
 
     def start(self):
-
-        self.photo = PhotoImage(file="timg.png")
-        a = Frame(self.root, width=500, height=600, bg=self.photo)
+        a = Frame(self.root, width=500, height=600, bg="green")
         a.pack()
-        # # 设置窗口背景图
+        b = Frame(self.root, bg="red")
+        b.place(in_=a, x=30, y=20, width=300, height=300)
+        # 设置窗口背景图
         # self.photo = PhotoImage(file="timg.png")
         # self.label = Label(in_=a, image=self.photo)
         # self.label.pack()
         # text1 = Text(self.root)
         # text1.place(in_=a, width=500, height=300)
-        tree = ttk.Treeview(in_=a, height=20)
+        tree = ttk.Treeview(self.root, height=20)
         tree.pack()
         treeF1 = tree.insert("", 0, text="我的好友", values=("我的好友"))
         treeF2 = tree.insert("", 1, text="最近联系", values=("最近联系"))
