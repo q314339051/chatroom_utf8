@@ -1,8 +1,6 @@
 from tkinter import *
-from time import sleep
 from tkinter import ttk
-from threading import Thread
-import _thread
+
 
 
 class Application:
@@ -18,7 +16,7 @@ class Application:
         self.login_window()
         self.win = None
 
-    def login_window(self):
+    def login_window(self):  # 创建登录窗口
         # 设置窗口背景图
         self.photo = PhotoImage(file="backgr.gif")
         self.label = Label(self.root, image=self.photo)
@@ -38,8 +36,8 @@ class Application:
         Button(self.root, text="注册", command=self.register_window).place(x=120, y=130)
         Button(self.root, text="登录", command=lambda: self.send_data(text1.get(), text2.get())).place(x=200, y=130)
 
-    def register_window(self):
-        # 创建注册窗口
+    def register_window(self):  # 创建注册窗口
+
         self.reg = Toplevel()
         # 窗口大小
         self.reg.geometry("350x200")
@@ -126,7 +124,6 @@ class MainWindow:
         treeF2_1 = tree.insert(treeF2, 0, text="中国黑龙江", values=("中国黑龙江"))
         tree.bind("<Double-1>", self.dblclickAdaptor(self.dblclick, tree=tree))
 
-
         Button(self.root, text="添加好友", command=self.add_friend).place(x=170, y=430)
 
     def dblclickAdaptor(self, fun, **kwds):
@@ -156,10 +153,28 @@ class MainWindow:
         self.chat.resizable(0, 0)
         # 设置窗口标题
         self.chat.title("与%s聊天" % name)
+        # 聊天信息块
+        a = Frame(self.chat, width=500, height=300, bg="green")
+        a.pack()
+        text1 = Text(self.chat, )
+        text1.place(in_=a, width=500, height=300)
+        # 发送信息块
+        b = Frame(self.chat, width=500, height=100, bg="red")
+        b.pack()
+        text2 = Text(self.chat, )
+        text2.place(in_=b, width=500, height=100)
+        # 更新聊天信息
+        self.recv_message(text1)
 
         # 点击关闭按钮触发事件
         self.chat.protocol("WM_DELETE_WINDOW", lambda: self.on_closing(name=name))
         self.chat.mainloop()
+
+    def recv_message(self, text):  # 接收信息
+        text.config(state=NORMAL)
+        # 显示信息
+        text.insert(END, "5143543")
+        text.config(state=DISABLED)
 
     def on_closing(self, name):  # 关闭聊天窗口
         self.dict[name].destroy()
@@ -168,13 +183,17 @@ class MainWindow:
     def add_friend(self):
         # 创建加好友窗口
         self.af = Toplevel()
-
         # 窗口大小
-        self.af.geometry("500x400")
+        self.af.geometry("500x200")
         # 设置窗口大小固定
         self.af.resizable(0, 0)
         # 设置窗口标题
         self.af.title("添加好友")
+        Label(self.af, text='输入好友账号').place(x=50, y=30)
+        text1 = StringVar()
+        Entry(self.af, textvariable=text1).place(x=130, y=30)
+        Button(self.af, text="添加好友", command=None).place(x=300, y=30)
+        Button(self.af, text="加入群", command=None).place(x=380, y=30)
 
 
 if __name__ == '__main__':
