@@ -6,7 +6,7 @@
 """
 from socket import *
 from threading import Thread
-from config import *
+from connfig import *
 import sys
 import re
 import json
@@ -31,10 +31,10 @@ class Client(object):
             sys.exit("网络异常,请检查后启动")
 
     def send(self,value):
-        self.sockfd.send(value)
+        return self.sockfd.send(value)
 
     def recv(self, number):
-        return self.recv(number)
+        return self.sockfd.recv(number)
 
 
 
@@ -43,8 +43,8 @@ class ClientManager():
     实现client功能类
     """
 
-    def __init__(self):
-        self.clientor = Client()
+    # def __init__(self):
+    #     self.clientor = Client()
         # self.clientor.start()
 
     def is_mobile(self, value):
@@ -83,16 +83,15 @@ class ClientManager():
         while True:
 
             if (" " in upwd) or (" " in uid):
-                print("账号或密码不能有空格")
-                continue
+                return "账号或密码不能有空格"
+
             if not (self.is_mobile(uid) or self.is_email(uid)):
-                print("账号格式不对,请重新输入")
-                continue
+                return "账号格式不对,请重新输入"
+
             if not self.is_password(upwd):
-                print("密码格式不正确")
+                return "密码格式不正确"
             if upwd != upwd1:
-                print("两次输入密码不一致")
-                continue
+                return "两次输入密码不一致"
 
             data = {"style":"R", "uid":uid, "uname":uname, "upwd":upwd}
             request = json.dumps(data).encode()
