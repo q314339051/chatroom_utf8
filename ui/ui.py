@@ -4,6 +4,7 @@ from client import *
 import tkinter.messagebox
 from tkinter import scrolledtext
 
+
 class Application:
     def __init__(self, master):
         self.root = master
@@ -29,16 +30,18 @@ class Application:
         # 创建输入框
         text1 = StringVar()
         text2 = StringVar()
-        Entry(self.root, textvariable=text1,).place(x=110, y=40)
+        Entry(self.root, textvariable=text1, ).place(x=110, y=40)
         Entry(self.root, show="*", textvariable=text2).place(x=110, y=80)
         # 创建按钮
         Button(self.root, text="注册", command=self.register_window).place(x=120, y=130)
         Button(self.root, text="登录", command=lambda: self.send_data(text1.get(), text2.get())).place(x=200, y=130)
+
     def close_window(self):
         self.list0[0].destroy()
         del self.list0[0]
+
     def register_window(self):  # 创建注册窗口
-        if len(self.list0)>0:
+        if len(self.list0) > 0:
             self.list0[0].deiconify()
             return
         self.reg = Toplevel()
@@ -68,16 +71,16 @@ class Application:
         Entry(self.reg, show="*", textvariable=text3).place(x=110, y=110)
         Entry(self.reg, show="*", textvariable=text4).place(x=110, y=150)
         # 创建按钮
-        Button(self.reg, text="确认注册", command=lambda: self.send_data(text2.get(), text3.get(), text4.get(),text1.get())).place(
+        Button(self.reg, text="确认注册",
+               command=lambda: self.send_data(text2.get(), text3.get(), text4.get(), text1.get())).place(
             x=150, y=180)
         # 点击关闭按钮触发事件
         self.reg.protocol("WM_DELETE_WINDOW", lambda: self.close_window())
 
-
         # 循环
         self.reg.mainloop()
 
-    def send_data(self,  user, passsword1, passsword2=None,name=None):
+    def send_data(self, user, passsword1, passsword2=None, name=None):
         """
             发送数据给客户端
         :param user: 用户名
@@ -90,7 +93,7 @@ class Application:
             self.login_successfully()
         else:
             q = ClientManager()
-            a = q.register(user,passsword1,passsword2,name)
+            a = q.register(user, passsword1, passsword2, name)
             tkinter.messagebox.showinfo(title='提示', message=a)
             self.list0[0].deiconify()
         # if passsword2 == None:
@@ -142,7 +145,7 @@ class MainWindow:
         # text1 = Text(self.root)
         # text1.place(in_=a, width=500, height=300)
         tree = ttk.Treeview(self.root, )
-        tree.place(in_=a,x=30, y=20, width=200, height=500)
+        tree.place(in_=a, x=30, y=20, width=200, height=500)
         treeF1 = tree.insert("", 0, text="我的好友", values=("我的好友"))
         treeF2 = tree.insert("", 1, text="最近联系", values=("最近联系"))
         treeF1_1 = tree.insert(treeF1, 0, text="中国黑龙江", values=("中国黑龙江"))
@@ -167,8 +170,6 @@ class MainWindow:
         # print("you clicked on ", tree.item(item, "values"))
         # print(tree.item(item, "values")[0])
 
-
-
     def window_exist(self, name):  # 判断窗口是否已存在
         # 如果窗口存在，则显示该窗口
 
@@ -187,41 +188,32 @@ class MainWindow:
         # 窗口大小
         self.chat.geometry("580x400")
         # 设置窗口大小固定
-        # self.chat.resizable(0, 0)
+        self.chat.resizable(0, 0)
         # 设置窗口标题
         self.chat.title("与%s聊天" % name)
 
-        # message_block = Frame(self.chat, width=580, height=400, bg="#D3D0C6")
-        # message_block.pack()
+        message_block = Frame(self.chat, width=580, height=400, bg="#D3D0C6")
+        message_block.pack()
         # 聊天信息块
         # text1 = Text(self.chat, )
         # text1.place(in_=message_block, x=10,y=10,width=380, height=250)
         # 发送信息块
-        # text2 = Text(self.chat, )
-        # text2.place(in_=message_block, x=10,y=270, width=380, height=100)
+        text2 = Text(self.chat, )
+        text2.place(in_=message_block, x=10, y=270, width=380, height=100)
 
-        # text3 = Text(self.chat, )
-        # text3.place(in_=message_block, x=400, y=10, width=170, height=380)
-        scroll = Scrollbar()
-        text = Text(self.chat, )
+        text3 = Text(self.chat, )
+        text3.place(in_=message_block, x=400, y=10, width=170, height=380)
+        self.scroll = Scrollbar()
 
-        scroll.pack(side=RIGHT, fill=Y)
-        text.pack(side=LEFT, fill=Y,height=1)
-        scroll.config(command=text.yview)
-        text.config(yscrollcommand=scroll.set)
-        # monty = ttk.LabelFrame(self.chat, text=" Monty Python ")
-        # monty.place(in_=message_block, x=10,y=10,width=380, height=250)
-        # scr = scrolledtext.ScrolledText(monty, width=30, height=5, wrap=WORD)
-        # scr.place(in_=message_block, x=400, y=10)
-        # 创建滚动条
-        # scroll = Scrollbar()
-        # scroll.place(in_=text1,x=400, y=10, fill=Y)  # side是滚动条放置的位置，上下左右。fill是将滚动条沿着y轴填充
-        # 将滚动条与文本框关联
-        # scroll.config(command=text1.yview)  # 将文本框关联到滚动条上，滚动条滑动，文本框跟随滑动
-        # text1.config(yscrollcommand=scroll.set)  # 将滚动条关联到文本框
+
+        scr = scrolledtext.ScrolledText(self.chat, width=70, height=13, font=("隶书", 18))
+        scr.place(in_=message_block, x=10, y=10, width=380, height=250)  # 滚动文本框在页面的位置
+        # 设置文本框不可编辑
+        scr.config(state=DISABLED)
+
         # 发送按钮
-        # b = Button(self.chat, text="发送", command=lambda: self.recv_message(text1, text2.get("1.0", END)))
-        # b.place(in_=message_block,width=30,height=22,x=350,y=375)
+        b = Button(self.chat, text="发送", command=lambda: self.recv_message(scr, text2.get("1.0", END)))
+        b.place(in_=message_block, width=30, height=22, x=350, y=375)
         # 更新聊天信息
         # self.recv_message(text1, "3546843")
 
@@ -230,9 +222,13 @@ class MainWindow:
         self.chat.mainloop()
 
     def recv_message(self, text, msg):  # 接收信息
+        # 设置文本框可编辑
         text.config(state=NORMAL)
-        # 显示信息
+        # 插入信息
         text.insert(END, msg)
+        # 显示文本框最近的信息
+        text.see(END)
+        # 设置文本框不可编辑
         text.config(state=DISABLED)
 
     def close_window(self, name):  # 关闭窗口
