@@ -2,7 +2,6 @@ from tkinter import *
 from tkinter import ttk
 
 
-
 class Application:
     def __init__(self, master):
         self.root = master
@@ -140,12 +139,13 @@ class MainWindow:
         # print("you clicked on ", tree.item(item, "values"))
         # print(tree.item(item, "values")[0])
 
-    def window_exist(self,name): # 判断窗口是否已创建
+    def window_exist(self, name):  # 判断窗口是否已创建
         # 如果该窗口存在，则不创建
         if name in self.dict:
             # 显示已经打开窗口
             self.dict[name].deiconify()
             return True
+
     def chat_window(self, name):  # 创建聊天窗口
         # 判断窗口是否已存在
         if self.window_exist(name):
@@ -171,15 +171,16 @@ class MainWindow:
         text2 = Text(self.chat, )
         text2.place(in_=b, width=500, height=100)
         # 发送按钮
-        Button(self.chat, text="发送", command=lambda: self.recv_message(text1,text2.get("1.0",END))).place(x=450, y=400)
+        Button(self.chat, text="发送", command=lambda: self.recv_message(text1, text2.get("1.0", END))).place(x=450,
+                                                                                                            y=400)
         # 更新聊天信息
-        self.recv_message(text1,"3546843")
+        self.recv_message(text1, "3546843")
 
         # 点击关闭按钮触发事件
         self.chat.protocol("WM_DELETE_WINDOW", lambda: self.close_window(name=name))
         self.chat.mainloop()
 
-    def recv_message(self, text,msg):  # 接收信息
+    def recv_message(self, text, msg):  # 接收信息
         text.config(state=NORMAL)
         # 显示信息
         text.insert(END, msg)
