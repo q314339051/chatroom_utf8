@@ -1,11 +1,12 @@
 from tkinter import *
 from tkinter import ttk
-
+from client import *
+import tkinter.messagebox
+from tkinter import scrolledtext
 
 class Application:
     def __init__(self, master):
         self.root = master
-
         # 窗口大小
         self.root.geometry("350x200")
         # 设置窗口标题
@@ -13,11 +14,11 @@ class Application:
         # 设置窗口不可变
         self.root.resizable(0, 0)
         self.login_window()
-        self.win = None
+        self.list0 = []
 
     def login_window(self):  # 创建登录窗口
         # 设置窗口背景图
-        self.photo = PhotoImage(file="backgr.gif")
+        self.photo = PhotoImage(file="b.png")
         self.label = Label(self.root, image=self.photo)
         self.label.pack()
 
@@ -28,46 +29,55 @@ class Application:
         # 创建输入框
         text1 = StringVar()
         text2 = StringVar()
-        Entry(self.root, textvariable=text1).place(x=110, y=40)
+        Entry(self.root, textvariable=text1,).place(x=110, y=40)
         Entry(self.root, show="*", textvariable=text2).place(x=110, y=80)
-
         # 创建按钮
         Button(self.root, text="注册", command=self.register_window).place(x=120, y=130)
         Button(self.root, text="登录", command=lambda: self.send_data(text1.get(), text2.get())).place(x=200, y=130)
-
+    def close_window(self):
+        self.list0[0].destroy()
+        del self.list0[0]
     def register_window(self):  # 创建注册窗口
-
+        if len(self.list0)>0:
+            self.list0[0].deiconify()
+            return
         self.reg = Toplevel()
         # 窗口大小
-        self.reg.geometry("350x200")
+        self.reg.geometry("350x230")
         # 设置窗口大小固定
         self.reg.resizable(0, 0)
         # 设置窗口标题
         self.reg.title("注册")
+        self.list0.append(self.reg)
         # 设置窗口背景图
-        photo = PhotoImage(file="backgr.gif")
+        photo = PhotoImage(file="b.png")
         label = Label(self.reg, image=photo)  # 图片
         label.pack()
         # 创建账号密码标签
-        Label(self.reg, text='账号').place(x=50, y=30)
-        Label(self.reg, text='密码').place(x=50, y=70)
-        Label(self.reg, text='确认密码').place(x=26, y=110)
+        Label(self.reg, text='昵称').place(x=50, y=30)
+        Label(self.reg, text='账号').place(x=50, y=70)
+        Label(self.reg, text='密码').place(x=50, y=110)
+        Label(self.reg, text='确认密码').place(x=26, y=150)
         # 创建输入框
         text1 = StringVar()
         text2 = StringVar()
         text3 = StringVar()
+        text4 = StringVar()
         Entry(self.reg, textvariable=text1).place(x=110, y=30)
-        Entry(self.reg, show="*", textvariable=text2).place(x=110, y=70)
+        Entry(self.reg, textvariable=text2).place(x=110, y=70)
         Entry(self.reg, show="*", textvariable=text3).place(x=110, y=110)
+        Entry(self.reg, show="*", textvariable=text4).place(x=110, y=150)
         # 创建按钮
-        Button(self.reg, text="确认注册", command=lambda: self.send_data(text1.get(), text2.get(), text3.get())).place(
-            x=250, y=150)
+        Button(self.reg, text="确认注册", command=lambda: self.send_data(text2.get(), text3.get(), text4.get(),text1.get())).place(
+            x=150, y=180)
+        # 点击关闭按钮触发事件
+        self.reg.protocol("WM_DELETE_WINDOW", lambda: self.close_window())
 
-        # command = lambda: self.send_data(text1.get(), text2.get(), text3.get())
+
         # 循环
         self.reg.mainloop()
 
-    def send_data(self, user, passsword1, passsword2=None):
+    def send_data(self,  user, passsword1, passsword2=None,name=None):
         """
             发送数据给客户端
         :param user: 用户名
@@ -75,13 +85,20 @@ class Application:
         :param passsword2: 确认密码
         :return:
         """
-
         if passsword2 == None:
             # 登录成功
             self.login_successfully()
-        if passsword2 != None:
-            # 注册成功
-            self.registered_successfully()
+        else:
+            q = ClientManager()
+            a = q.register(user,passsword1,passsword2,name)
+            tkinter.messagebox.showinfo(title='提示', message=a)
+            self.list0[0].deiconify()
+        # if passsword2 == None:
+        #     # 登录成功
+        #     self.login_successfully()
+        # if passsword2 != None:
+        #     # 注册成功
+        #     self.registered_successfully()
 
     def login_successfully(self):
         # 登录成功
@@ -105,16 +122,27 @@ class MainWindow:
         # 创建主窗口
         self.root = Tk()
         # 窗口大小
-        self.root.geometry("260x500")
+        self.root.geometry("260x600")
         # 设置窗口标题
         self.root.title("主窗口")
-
+        # 设置窗口大小固定
+        self.root.resizable(0, 0)
         self.dict = {}
         self.start()
 
     def start(self):
-        tree = ttk.Treeview(self.root, height=20)
-        tree.pack()
+        a = Frame(self.root, width=500, height=600, bg="#FAF0E6")
+        a.pack()
+        # b = Frame(self.root, bg="red")
+        # b.place(in_=a, x=30, y=20, width=300, height=300)
+        # 设置窗口背景图
+        # self.photo = PhotoImage(file="timg.png")
+        # self.label = Label(in_=a, image=self.photo)
+        # self.label.pack()
+        # text1 = Text(self.root)
+        # text1.place(in_=a, width=500, height=300)
+        tree = ttk.Treeview(self.root, )
+        tree.place(in_=a,x=30, y=20, width=200, height=500)
         treeF1 = tree.insert("", 0, text="我的好友", values=("我的好友"))
         treeF2 = tree.insert("", 1, text="最近联系", values=("最近联系"))
         treeF1_1 = tree.insert(treeF1, 0, text="中国黑龙江", values=("中国黑龙江"))
@@ -123,9 +151,9 @@ class MainWindow:
         treeF2_1 = tree.insert(treeF2, 0, text="中国黑龙江", values=("中国黑龙江"))
         tree.bind("<Double-1>", self.dblclickAdaptor(self.dblclick, tree=tree))
 
-        Button(self.root, text="添加好友", command=self.add_friend).place(x=30, y=430)
-        Button(self.root, text="创建群", command=None).place(x=110, y=430)
-        Button(self.root, text="加入群", command=self.join_group).place(x=180, y=430)
+        Button(self.root, text="添加好友", command=self.add_friend).place(x=30, y=530)
+        Button(self.root, text="创建群", command=None).place(x=110, y=530)
+        Button(self.root, text="加入群", command=self.join_group).place(x=180, y=530)
 
     def dblclickAdaptor(self, fun, **kwds):
         return lambda event, fun=fun, kwds=kwds: fun(event, **kwds)
@@ -139,10 +167,12 @@ class MainWindow:
         # print("you clicked on ", tree.item(item, "values"))
         # print(tree.item(item, "values")[0])
 
-    def window_exist(self, name):  # 判断窗口是否已创建
-        # 如果该窗口存在，则不创建
+
+
+    def window_exist(self, name):  # 判断窗口是否已存在
+        # 如果窗口存在，则显示该窗口
+
         if name in self.dict:
-            # 显示已经打开窗口
             self.dict[name].deiconify()
             return True
 
@@ -155,26 +185,45 @@ class MainWindow:
         self.chat = Toplevel()
         self.dict[name] = self.chat
         # 窗口大小
-        self.chat.geometry("500x430")
+        self.chat.geometry("580x400")
         # 设置窗口大小固定
-        self.chat.resizable(0, 0)
+        # self.chat.resizable(0, 0)
         # 设置窗口标题
         self.chat.title("与%s聊天" % name)
+
+        # message_block = Frame(self.chat, width=580, height=400, bg="#D3D0C6")
+        # message_block.pack()
         # 聊天信息块
-        a = Frame(self.chat, width=500, height=300, bg="green")
-        a.pack()
-        text1 = Text(self.chat, )
-        text1.place(in_=a, width=500, height=300)
+        # text1 = Text(self.chat, )
+        # text1.place(in_=message_block, x=10,y=10,width=380, height=250)
         # 发送信息块
-        b = Frame(self.chat, width=500, height=100, bg="red")
-        b.pack()
-        text2 = Text(self.chat, )
-        text2.place(in_=b, width=500, height=100)
+        # text2 = Text(self.chat, )
+        # text2.place(in_=message_block, x=10,y=270, width=380, height=100)
+
+        # text3 = Text(self.chat, )
+        # text3.place(in_=message_block, x=400, y=10, width=170, height=380)
+        scroll = Scrollbar()
+        text = Text(self.chat, )
+
+        scroll.pack(side=RIGHT, fill=Y)
+        text.pack(side=LEFT, fill=Y,height=1)
+        scroll.config(command=text.yview)
+        text.config(yscrollcommand=scroll.set)
+        # monty = ttk.LabelFrame(self.chat, text=" Monty Python ")
+        # monty.place(in_=message_block, x=10,y=10,width=380, height=250)
+        # scr = scrolledtext.ScrolledText(monty, width=30, height=5, wrap=WORD)
+        # scr.place(in_=message_block, x=400, y=10)
+        # 创建滚动条
+        # scroll = Scrollbar()
+        # scroll.place(in_=text1,x=400, y=10, fill=Y)  # side是滚动条放置的位置，上下左右。fill是将滚动条沿着y轴填充
+        # 将滚动条与文本框关联
+        # scroll.config(command=text1.yview)  # 将文本框关联到滚动条上，滚动条滑动，文本框跟随滑动
+        # text1.config(yscrollcommand=scroll.set)  # 将滚动条关联到文本框
         # 发送按钮
-        Button(self.chat, text="发送", command=lambda: self.recv_message(text1, text2.get("1.0", END))).place(x=450,
-                                                                                                            y=400)
+        # b = Button(self.chat, text="发送", command=lambda: self.recv_message(text1, text2.get("1.0", END)))
+        # b.place(in_=message_block,width=30,height=22,x=350,y=375)
         # 更新聊天信息
-        self.recv_message(text1, "3546843")
+        # self.recv_message(text1, "3546843")
 
         # 点击关闭按钮触发事件
         self.chat.protocol("WM_DELETE_WINDOW", lambda: self.close_window(name=name))
