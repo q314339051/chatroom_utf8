@@ -136,16 +136,18 @@ class MainWindow:
     def start(self):
         a = Frame(self.root, width=500, height=600, bg="#FAF0E6")
         a.pack()
+        # 设置窗口背景图
+        photo = PhotoImage(file="timg.png")
+        label = Label(self.root, image=photo)  # 图片
+        label.place(in_=a, )
         # b = Frame(self.root, bg="red")
         # b.place(in_=a, x=30, y=20, width=300, height=300)
-        # 设置窗口背景图
-        # self.photo = PhotoImage(file="timg.png")
-        # self.label = Label(in_=a, image=self.photo)
-        # self.label.pack()
+
         # text1 = Text(self.root)
         # text1.place(in_=a, width=500, height=300)
-        tree = ttk.Treeview(self.root, )
-        tree.place(in_=a, x=30, y=20, width=200, height=500)
+        tree = ttk.Treeview(self.root, show="tree")
+        tree.place(in_=a, x=15, y=20, width=230, height=500)
+
         treeF1 = tree.insert("", 0, text="我的好友", values=("我的好友"))
         treeF2 = tree.insert("", 1, text="最近联系", values=("最近联系"))
         treeF1_1 = tree.insert(treeF1, 0, text="中国黑龙江", values=("中国黑龙江"))
@@ -157,7 +159,7 @@ class MainWindow:
         Button(self.root, text="添加好友", command=self.add_friend).place(x=30, y=530)
         Button(self.root, text="创建群", command=None).place(x=110, y=530)
         Button(self.root, text="加入群", command=self.join_group).place(x=180, y=530)
-
+        self.root.mainloop()
     def dblclickAdaptor(self, fun, **kwds):
         return lambda event, fun=fun, kwds=kwds: fun(event, **kwds)
 
@@ -186,24 +188,28 @@ class MainWindow:
         self.chat = Toplevel()
         self.dict[name] = self.chat
         # 窗口大小
-        self.chat.geometry("580x400")
+        self.chat.geometry("580x430")
         # 设置窗口大小固定
         self.chat.resizable(0, 0)
         # 设置窗口标题
         self.chat.title("与%s聊天" % name)
 
-        message_block = Frame(self.chat, width=580, height=400, bg="#D3D0C6")
+        message_block = Frame(self.chat, width=580, height=450, bg="#D3D0C6")
         message_block.pack()
+        # 设置窗口背景图
+        photo = PhotoImage(file="timg.png")
+        label = Label(self.chat, image=photo)  # 图片
+        label.place(in_=message_block,)
         # 聊天信息块
         # text1 = Text(self.chat, )
         # text1.place(in_=message_block, x=10,y=10,width=380, height=250)
         # 发送信息块
         text2 = Text(self.chat, )
-        text2.place(in_=message_block, x=10, y=270, width=380, height=100)
+        text2.place(in_=message_block, x=10, y=290, width=380, height=100)
 
-        text3 = Text(self.chat, )
-        text3.place(in_=message_block, x=400, y=10, width=170, height=380)
-        self.scroll = Scrollbar()
+        # text3 = Text(self.chat, )
+        # text3.place(in_=message_block, x=400, y=10, width=170, height=400)
+        # self.scroll = Scrollbar()
 
 
         scr = scrolledtext.ScrolledText(self.chat, width=70, height=13, font=("隶书", 18))
@@ -212,8 +218,11 @@ class MainWindow:
         scr.config(state=DISABLED)
 
         # 发送按钮
-        b = Button(self.chat, text="发送", command=lambda: self.recv_message(scr, text2.get("1.0", END)))
-        b.place(in_=message_block, width=30, height=22, x=350, y=375)
+        b = Button(self.chat, text="发送", command=lambda: self.recv_message(scr, text2,))
+        b.place(in_=message_block, width=30, height=22, x=360, y=395)
+        # 聊天记录按钮
+        record = Button(self.chat, text="聊天记录", command=None)
+        record.place(in_=message_block, width=50, height=22, x=340, y=265)
         # 更新聊天信息
         # self.recv_message(text1, "3546843")
 
@@ -221,15 +230,17 @@ class MainWindow:
         self.chat.protocol("WM_DELETE_WINDOW", lambda: self.close_window(name=name))
         self.chat.mainloop()
 
-    def recv_message(self, text, msg):  # 接收信息
+    def recv_message(self, text,text2):  # 接收信息
         # 设置文本框可编辑
         text.config(state=NORMAL)
         # 插入信息
-        text.insert(END, msg)
+        text.insert(END, text2.get("1.0", END))
         # 显示文本框最近的信息
         text.see(END)
         # 设置文本框不可编辑
         text.config(state=DISABLED)
+        # 清空发送框
+        text2.delete('1.0', 'end')
 
     def close_window(self, name):  # 关闭窗口
         self.dict[name].destroy()
@@ -248,14 +259,19 @@ class MainWindow:
         self.af.resizable(0, 0)
         # 设置窗口标题
         self.af.title("添加好友")
+        # 设置窗口背景图
+        photo = PhotoImage(file="b.png")
+        label = Label(self.af, image=photo)  # 图片
+        label.pack()
+
         self.dict["添加好友"] = self.af
         Label(self.af, text='输入好友账号').place(x=50, y=40)
         text1 = StringVar()
-        Entry(self.af, textvariable=text1).place(x=130, y=40)
-        Button(self.af, text="添加好友", command=None).place(x=300, y=40)
+        Entry(self.af, textvariable=text1).place(x=140, y=40)
+        Button(self.af, text="添加好友", command=None,).place(x=300, y=40,height=25)
         # 点击关闭按钮触发事件
         self.af.protocol("WM_DELETE_WINDOW", lambda: self.close_window(name="添加好友"))
-
+        self.af.mainloop()
     def join_group(self):
         # 判断窗口是否已存在
         if self.window_exist("加入群聊"):
@@ -269,14 +285,18 @@ class MainWindow:
         self.af.resizable(0, 0)
         # 设置窗口标题
         self.af.title("加入群聊")
+        # 设置窗口背景图
+        photo = PhotoImage(file="b.png")
+        label = Label(self.af, image=photo)  # 图片
+        label.pack()
         self.dict["加入群聊"] = self.af
         Label(self.af, text='输入群号').place(x=50, y=40)
         text1 = StringVar()
         Entry(self.af, textvariable=text1).place(x=130, y=40)
-        Button(self.af, text="加入群聊", command=None).place(x=300, y=40)
+        Button(self.af, text="加入群聊", command=None).place(x=300, y=40,height=25)
         # 点击关闭按钮触发事件
         self.af.protocol("WM_DELETE_WINDOW", lambda: self.close_window(name="加入群聊"))
-
+        self.af.mainloop()
 
 if __name__ == '__main__':
     root = Tk()
