@@ -134,31 +134,26 @@ class MainWindow:
         self.start()
 
     def start(self):
-        a = Frame(self.root, width=500, height=600, bg="#FAF0E6")
+        a = Frame(self.root, width=500, height=600, bg= "#D3D3D3")
         a.pack()
-        # 设置窗口背景图
-        photo = PhotoImage(file="timg.png")
-        label = Label(self.root, image=photo)  # 图片
-        label.place(in_=a, )
-        # b = Frame(self.root, bg="red")
-        # b.place(in_=a, x=30, y=20, width=300, height=300)
 
-        # text1 = Text(self.root)
-        # text1.place(in_=a, width=500, height=300)
         tree = ttk.Treeview(self.root, show="tree")
         tree.place(in_=a, x=15, y=20, width=230, height=500)
 
         treeF1 = tree.insert("", 0, text="我的好友", values=("我的好友"))
         treeF2 = tree.insert("", 1, text="最近联系", values=("最近联系"))
-        treeF1_1 = tree.insert(treeF1, 0, text="中国黑龙江", values=("中国黑龙江"))
+        for i in range(50):
+             tree.insert(treeF1, 1, text=i, values=i)
         reeF1_2 = tree.insert(treeF1, 1, text="中国吉林", values=("中国吉林"))
+        treeF1_1 = tree.insert(treeF1, 1, text="中国黑龙江", values=("中国黑龙江"))
         reeF1_3 = tree.insert(treeF1, 1, text="中国广东", values=("中国广东"))
         treeF2_1 = tree.insert(treeF2, 0, text="中国黑龙江", values=("中国黑龙江"))
         tree.bind("<Double-1>", self.dblclickAdaptor(self.dblclick, tree=tree))
+        # tree.bind("<Double-1>", lambda:self.dblclick(tree=tree))
 
-        Button(self.root, text="添加好友", command=self.add_friend).place(x=30, y=530)
-        Button(self.root, text="创建群", command=None).place(x=110, y=530)
-        Button(self.root, text="加入群", command=self.join_group).place(x=180, y=530)
+        Button(self.root, text="添加好友",bg="#4169E1", command=lambda:self.create_win("添加好友","输入好友账号",None)).place(x=30, y=530)
+        Button(self.root, text="创建群", bg="#4169E1",command=lambda:self.create_win("创建群","输入群号",None)).place(x=110, y=530)
+        Button(self.root, text="加入群", bg= "#4169E1",command=lambda:self.create_win("加入群","输入群号",None)).place(x=180, y=530)
         self.root.mainloop()
     def dblclickAdaptor(self, fun, **kwds):
         return lambda event, fun=fun, kwds=kwds: fun(event, **kwds)
@@ -172,16 +167,15 @@ class MainWindow:
         # print("you clicked on ", tree.item(item, "values"))
         # print(tree.item(item, "values")[0])
 
-    def window_exist(self, name):  # 判断窗口是否已存在
+    def win_exist(self, name):  # 判断窗口是否已存在
         # 如果窗口存在，则显示该窗口
-
         if name in self.dict:
             self.dict[name].deiconify()
             return True
 
     def chat_window(self, name):  # 创建聊天窗口
         # 判断窗口是否已存在
-        if self.window_exist(name):
+        if self.win_exist(name):
             # 窗口存在则返回
             return
         # 创建聊天窗口
@@ -193,6 +187,7 @@ class MainWindow:
         self.chat.resizable(0, 0)
         # 设置窗口标题
         self.chat.title("与%s聊天" % name)
+
 
         message_block = Frame(self.chat, width=580, height=450, bg="#D3D0C6")
         message_block.pack()
@@ -233,8 +228,13 @@ class MainWindow:
     def recv_message(self, text,text2):  # 接收信息
         # 设置文本框可编辑
         text.config(state=NORMAL)
+        # 获取当前光标行和列
+        l = text.index('insert')
         # 插入信息
         text.insert(END, text2.get("1.0", END))
+        text.tag_add('tag2', l, l[0]+".end")
+        text.tag_config('tag2', foreground='green',font=("隶书", 13))
+        text.insert(END, "  666\n")
         # 显示文本框最近的信息
         text.see(END)
         # 设置文本框不可编辑
@@ -246,57 +246,36 @@ class MainWindow:
         self.dict[name].destroy()
         del self.dict[name]
 
-    def add_friend(self):
+    def create_win(self,name,text,fun):
         # 判断窗口是否已存在
-        if self.window_exist("添加好友"):
+        if self.win_exist(name):
             # 窗口存在则返回
             return
-        # 创建加好友窗口
-        self.af = Toplevel()
+        # 创建窗口
+        self.win = Toplevel()
         # 窗口大小
-        self.af.geometry("400x130")
+        self.win.geometry("400x130")
         # 设置窗口大小固定
-        self.af.resizable(0, 0)
+        self.win.resizable(0, 0)
         # 设置窗口标题
-        self.af.title("添加好友")
+        self.win.title(name)
         # 设置窗口背景图
         photo = PhotoImage(file="b.png")
-        label = Label(self.af, image=photo)  # 图片
+        label = Label(self.win, image=photo)  # 图片
         label.pack()
+        # 将窗口对象加入字典
+        self.dict[name] = self.win
+        # 标签
+        Label(self.win, text=text).place(x=50, y=40)
+        # 输入框
+        text1 = StringVar()
+        Entry(self.win, textvariable=text1).place(x=130, y=40)
+        # 按钮
+        Button(self.win, text=name, command=fun).place(x=300, y=40, height=25)
+        # 点击关闭按钮触发事件
+        self.win.protocol("WM_DELETE_WINDOW", lambda: self.close_window(name=name))
+        self.win.mainloop()
 
-        self.dict["添加好友"] = self.af
-        Label(self.af, text='输入好友账号').place(x=50, y=40)
-        text1 = StringVar()
-        Entry(self.af, textvariable=text1).place(x=140, y=40)
-        Button(self.af, text="添加好友", command=None,).place(x=300, y=40,height=25)
-        # 点击关闭按钮触发事件
-        self.af.protocol("WM_DELETE_WINDOW", lambda: self.close_window(name="添加好友"))
-        self.af.mainloop()
-    def join_group(self):
-        # 判断窗口是否已存在
-        if self.window_exist("加入群聊"):
-            # 窗口存在则返回
-            return
-        # 创建加群窗口
-        self.af = Toplevel()
-        # 窗口大小
-        self.af.geometry("400x130")
-        # 设置窗口大小固定
-        self.af.resizable(0, 0)
-        # 设置窗口标题
-        self.af.title("加入群聊")
-        # 设置窗口背景图
-        photo = PhotoImage(file="b.png")
-        label = Label(self.af, image=photo)  # 图片
-        label.pack()
-        self.dict["加入群聊"] = self.af
-        Label(self.af, text='输入群号').place(x=50, y=40)
-        text1 = StringVar()
-        Entry(self.af, textvariable=text1).place(x=130, y=40)
-        Button(self.af, text="加入群聊", command=None).place(x=300, y=40,height=25)
-        # 点击关闭按钮触发事件
-        self.af.protocol("WM_DELETE_WINDOW", lambda: self.close_window(name="加入群聊"))
-        self.af.mainloop()
 
 if __name__ == '__main__':
     root = Tk()
