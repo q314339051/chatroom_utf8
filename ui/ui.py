@@ -1,6 +1,6 @@
 from tkinter import *
 from tkinter import ttk
-from client import *
+from client1 import *
 import tkinter.messagebox
 from tkinter import scrolledtext
 
@@ -92,9 +92,11 @@ class Application:
             # 登录成功
             self.login_successfully()
         else:
-            q = ClientManager()
-            a = q.register(user, passsword1, passsword2, name)
-            tkinter.messagebox.showinfo(title='提示', message=a)
+            # q = ClientManager()
+            # a = q.register(user, passsword1, passsword2, name)
+            # tkinter.messagebox.showinfo(title='提示', message=a)
+            data = client(user, passsword1, passsword2, name)
+            print(data)
             self.list0[0].deiconify()
         # if passsword2 == None:
         #     # 登录成功
