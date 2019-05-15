@@ -3,13 +3,13 @@ from tkinter import ttk
 from client1 import *
 import tkinter.messagebox
 from tkinter import scrolledtext
-
+import time
 
 class Application:
     def __init__(self, master):
         self.root = master
         # 窗口大小
-        self.root.geometry("350x200")
+        self.root.geometry("350x200+400+200")
         # 设置窗口标题
         self.root.title("登录")
         # 设置窗口不可变
@@ -46,7 +46,7 @@ class Application:
             return
         self.reg = Toplevel()
         # 窗口大小
-        self.reg.geometry("350x230")
+        self.reg.geometry("350x230+430+230")
         # 设置窗口大小固定
         self.reg.resizable(0, 0)
         # 设置窗口标题
@@ -89,15 +89,22 @@ class Application:
         :return:
         """
         if passsword2 == None:
-            # 登录成功
-            self.login_successfully()
+            data = login(user, passsword1, passsword2, name)
+            if data == "OK":
+                # 登录成功
+                self.login_successfully()
+            else:
+                self.messagebox("账号或密码不正确")
+
         else:
             # q = ClientManager()
             # a = q.register(user, passsword1, passsword2, name)
             # tkinter.messagebox.showinfo(title='提示', message=a)
-            data = client(user, passsword1, passsword2, name)
-            print(data)
-            self.list0[0].deiconify()
+            data = register(user, passsword1, passsword2, name)
+            if data == "OK":
+
+                self.messagebox("注册成功，请返回登录")
+                self.list0[0].destroy()
         # if passsword2 == None:
         #     # 登录成功
         #     self.login_successfully()
@@ -105,6 +112,8 @@ class Application:
         #     # 注册成功
         #     self.registered_successfully()
 
+    def messagebox(self,msg):  # 弹窗提示
+        tkinter.messagebox.showinfo(title='提示', message=msg)
     def login_successfully(self):
         # 登录成功
         Message(self.root, text='登录成功，正在跳转，请稍候...', ).place(x=10, y=130)
@@ -127,7 +136,7 @@ class MainWindow:
         # 创建主窗口
         self.root = Tk()
         # 窗口大小
-        self.root.geometry("260x600")
+        self.root.geometry("260x600+900+40")
         # 设置窗口标题
         self.root.title("主窗口")
         # 设置窗口大小固定
@@ -188,9 +197,7 @@ class MainWindow:
         # 设置窗口大小固定
         self.chat.resizable(0, 0)
         # 设置窗口标题
-        self.chat.title("与%s聊天" % name)
-
-
+        self.chat.title("与%s聊天中" % name)
         message_block = Frame(self.chat, width=580, height=450, bg="#D3D0C6")
         message_block.pack()
         # 设置窗口背景图
@@ -207,8 +214,6 @@ class MainWindow:
         # text3 = Text(self.chat, )
         # text3.place(in_=message_block, x=400, y=10, width=170, height=400)
         # self.scroll = Scrollbar()
-
-
         scr = scrolledtext.ScrolledText(self.chat, width=70, height=13, font=("隶书", 18))
         scr.place(in_=message_block, x=10, y=10, width=380, height=250)  # 滚动文本框在页面的位置
         # 设置文本框不可编辑
@@ -232,11 +237,12 @@ class MainWindow:
         text.config(state=NORMAL)
         # 获取当前光标行和列
         l = text.index('insert')
+
         # 插入信息
-        text.insert(END, text2.get("1.0", END))
-        text.tag_add('tag2', l, l[0]+".end")
+        text.insert(END, time.ctime()+":\n")
+        text.tag_add('tag2', l, l[0:-2]+".end")
         text.tag_config('tag2', foreground='green',font=("隶书", 13))
-        text.insert(END, "  666\n")
+        text.insert(END, "  "+text2.get("1.0", END))
         # 显示文本框最近的信息
         text.see(END)
         # 设置文本框不可编辑

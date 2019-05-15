@@ -13,7 +13,7 @@ def handle(connfd):
     print("Connect from:", connfd.getpeername())
     while True:
         data = connfd.recv(1024)
-        request = json.loads(data)
+        request = json.loads(data.decode())
         print(request)
 
         if not request:
@@ -48,13 +48,18 @@ def handle(connfd):
 
             # SQL 查询语句
             sql = "SELECT * FROM users \
-                   WHERE id = '666';"
+                   WHERE id = '%s'and password = '%s';"%(request["uid"],request["upwd"])
             try:
                 # 执行SQL语句
                 cursor.execute(sql)
                 # 获取所有记录列表
                 results = cursor.fetchall()
                 print(results)
+                print(len(results))
+                if len(results) == 0:
+                    print(1)
+                    connfd.send(b"NO")
+                    return
                 # for row in results:
                 #     fname = row[0]
                 #     lname = row[1]
