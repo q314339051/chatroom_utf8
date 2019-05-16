@@ -7,7 +7,7 @@ import pymysql
 HOST = "0.0.0.0"
 PORT = 8888
 ADDR = (HOST, PORT)
-
+dict01 = {}
 
 def handle(connfd):
     print("Connect from:", connfd.getpeername())
@@ -26,7 +26,7 @@ def handle(connfd):
             cursor = db.cursor()
 
             # SQL 插入语句
-            sql = """INSERT INTO users VALUES ('%s', '%s', '%s');"""%(request["uid"],request["uname"],request["upwd"])
+            sql = """INSERT INTO users VALUES ('%s', '%s', '%s');"""%(request["uid"],request["upwd"],request["uname"])
 
             try:
                 # 执行sql语句
@@ -36,8 +36,11 @@ def handle(connfd):
             except:
                 # 如果发生错误则回滚
                 db.rollback()
-
-            # 关闭数据库连接
+                # 关闭数据库连接
+                db.close()
+                connfd.send(b"NO")
+                return
+                # 关闭数据库连接
             db.close()
         elif request["style"] == "E":
             # 打开数据库连接
@@ -48,18 +51,22 @@ def handle(connfd):
 
             # SQL 查询语句
             sql = "SELECT * FROM users \
-                   WHERE id = '%s'and password = '%s';"%(request["uid"],request["upwd"])
+                   WHERE user_id = '%s'and user_pwd = '%s';"%(request["uid"],request["upwd"])
             try:
                 # 执行SQL语句
                 cursor.execute(sql)
                 # 获取所有记录列表
                 results = cursor.fetchall()
                 print(results)
-                print(len(results))
+
                 if len(results) == 0:
-                    print(1)
+
                     connfd.send(b"NO")
+                    # 关闭数据库连接
+                    db.close()
                     return
+                id = results[0][0]
+                dict01[id] = connfd
                 # for row in results:
                 #     fname = row[0]
                 #     lname = row[1]
@@ -73,11 +80,29 @@ def handle(connfd):
             except:
                 print("Error: unable to fecth data")
 
-
+            sql = """select user_id,user_name from users
+                      where user_id in (select user_id2 as user_id from friends where user_id1 = "%s")
+                      or user_id in (select user_id1 as user_id from friends where user_id2 = "%s");"""%(id,id)
+            # 执行SQL语句
+            cursor.execute(sql)
+            # 获取所有记录列表
+            results = cursor.fetchall()
+            dict1 = {}
+            for i in range(len(results)):
+                dict1[i] = results[i]
+            a = json.dumps(dict1).encode()
+            connfd.send(a)
             # 关闭数据库连接
             db.close()
-        connfd.send(b"OK")
-    connfd.close()
+            print(dict01)
+            connfd.send("45348".encode())
+        elif request["style"] == "M":
+            print(request["data"])
+            dict01[request["uid"]].send(request["data"].encode())
+        #     return
+        # connfd.send(b"OK")
+
+    # connfd.close()
 
 
 # 创建监听套接字

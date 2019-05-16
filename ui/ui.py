@@ -90,9 +90,10 @@ class Application:
         """
         if passsword2 == None:
             data = login(user, passsword1, passsword2, name)
-            if data == "OK":
+            if data :
+                print(data)
                 # 登录成功
-                self.login_successfully()
+                self.login_successfully(data)
             else:
                 self.messagebox("账号或密码不正确")
 
@@ -102,9 +103,10 @@ class Application:
             # tkinter.messagebox.showinfo(title='提示', message=a)
             data = register(user, passsword1, passsword2, name)
             if data == "OK":
-
                 self.messagebox("注册成功，请返回登录")
                 self.list0[0].destroy()
+            else:
+                self.messagebox(data)
         # if passsword2 == None:
         #     # 登录成功
         #     self.login_successfully()
@@ -114,7 +116,7 @@ class Application:
 
     def messagebox(self,msg):  # 弹窗提示
         tkinter.messagebox.showinfo(title='提示', message=msg)
-    def login_successfully(self):
+    def login_successfully(self,data):
         # 登录成功
         Message(self.root, text='登录成功，正在跳转，请稍候...', ).place(x=10, y=130)
         # 更新窗口
@@ -123,7 +125,7 @@ class Application:
         # 关闭登录窗口
         self.root.destroy()
         # 跳转到主窗口
-        MainWindow(self.root)
+        MainWindow(self.root,data)
 
     def registered_successfully(self):
         # 注册成功
@@ -131,7 +133,7 @@ class Application:
 
 
 class MainWindow:
-    def __init__(self, master):
+    def __init__(self, master,data):
         self.root = master
         # 创建主窗口
         self.root = Tk()
@@ -141,8 +143,11 @@ class MainWindow:
         self.root.title("主窗口")
         # 设置窗口大小固定
         self.root.resizable(0, 0)
-        self.dict = {}
+        self.win_dict = {}
+        self.friends = data
+        print(self.friends)
         self.start()
+
 
     def start(self):
         a = Frame(self.root, width=500, height=600, bg= "#D3D3D3")
@@ -153,12 +158,16 @@ class MainWindow:
 
         treeF1 = tree.insert("", 0, text="我的好友", values=("我的好友"))
         treeF2 = tree.insert("", 1, text="最近联系", values=("最近联系"))
-        for i in range(50):
-             tree.insert(treeF1, 1, text=i, values=i)
-        reeF1_2 = tree.insert(treeF1, 1, text="中国吉林", values=("中国吉林"))
-        treeF1_1 = tree.insert(treeF1, 1, text="中国黑龙江", values=("中国黑龙江"))
-        reeF1_3 = tree.insert(treeF1, 1, text="中国广东", values=("中国广东"))
-        treeF2_1 = tree.insert(treeF2, 0, text="中国黑龙江", values=("中国黑龙江"))
+        for i in range(len(self.friends)):
+            id = self.friends[str(i)][0]
+            name = self.friends[str(i)][1]
+            tree.insert(treeF1, 1, text=name, values=id)
+        # for i in range(50):
+        #      tree.insert(treeF1, 1, text=i, values=i)
+        # reeF1_2 = tree.insert(treeF1, 1, text="中国吉林", values=("中国吉林"))
+        # treeF1_1 = tree.insert(treeF1, 1, text="中国黑龙江", values=("中国黑龙江"))
+        # reeF1_3 = tree.insert(treeF1, 1, text="中国广东", values=("中国广东"))
+        # treeF2_1 = tree.insert(treeF2, 0, text="中国黑龙江", values=("中国黑龙江"))
         tree.bind("<Double-1>", self.dblclickAdaptor(self.dblclick, tree=tree))
         # tree.bind("<Double-1>", lambda:self.dblclick(tree=tree))
 
@@ -171,27 +180,30 @@ class MainWindow:
 
     def dblclick(self, event, tree):
         item = tree.selection()[0]
-        name = tree.item(item, "values")[0]
+        # name = tree.item(item, "values")[0]
+        name = tree.item(item, "text")
+        uid = tree.item(item, "values")[0]
+
         if name != "我的好友" and name != "最近联系":
-            self.chat_window(name)
+            self.chat_window(name,uid)
 
         # print("you clicked on ", tree.item(item, "values"))
         # print(tree.item(item, "values")[0])
 
     def win_exist(self, name):  # 判断窗口是否已存在
         # 如果窗口存在，则显示该窗口
-        if name in self.dict:
-            self.dict[name].deiconify()
+        if name in self.win_dict:
+            self.win_dict[name].deiconify()
             return True
 
-    def chat_window(self, name):  # 创建聊天窗口
+    def chat_window(self, name,uid):  # 创建聊天窗口
         # 判断窗口是否已存在
         if self.win_exist(name):
             # 窗口存在则返回
             return
         # 创建聊天窗口
         self.chat = Toplevel()
-        self.dict[name] = self.chat
+        self.win_dict[name] = self.chat
         # 窗口大小
         self.chat.geometry("580x430")
         # 设置窗口大小固定
@@ -208,19 +220,20 @@ class MainWindow:
         # text1 = Text(self.chat, )
         # text1.place(in_=message_block, x=10,y=10,width=380, height=250)
         # 发送信息块
-        text2 = Text(self.chat, )
-        text2.place(in_=message_block, x=10, y=290, width=380, height=100)
+        self.text2 = Text(self.chat, )
+        self.text2.place(in_=message_block, x=10, y=290, width=380, height=100)
 
         # text3 = Text(self.chat, )
         # text3.place(in_=message_block, x=400, y=10, width=170, height=400)
         # self.scroll = Scrollbar()
-        scr = scrolledtext.ScrolledText(self.chat, width=70, height=13, font=("隶书", 18))
-        scr.place(in_=message_block, x=10, y=10, width=380, height=250)  # 滚动文本框在页面的位置
+        self.scr = scrolledtext.ScrolledText(self.chat, width=70, height=13, font=("隶书", 18))
+        self.scr.place(in_=message_block, x=10, y=10, width=380, height=250)  # 滚动文本框在页面的位置
         # 设置文本框不可编辑
-        scr.config(state=DISABLED)
+        self.scr.config(state=DISABLED)
 
         # 发送按钮
-        b = Button(self.chat, text="发送", command=lambda: self.recv_message(scr, text2,))
+        # b = Button(self.chat, text="发送", command=lambda: self.recv_message(scr, text2,))
+        b = Button(self.chat, text="发送", command=lambda: self.recv_message6(uid))
         b.place(in_=message_block, width=30, height=22, x=360, y=395)
         # 聊天记录按钮
         record = Button(self.chat, text="聊天记录", command=None)
@@ -232,27 +245,33 @@ class MainWindow:
         self.chat.protocol("WM_DELETE_WINDOW", lambda: self.close_window(name=name))
         self.chat.mainloop()
 
-    def recv_message(self, text,text2):  # 接收信息
-        # 设置文本框可编辑
-        text.config(state=NORMAL)
-        # 获取当前光标行和列
-        l = text.index('insert')
+    def recv_message6(self,uid):
+        data = self.text2.get("1.0", END)
+        send(data,uid)
+        self.recv_message()
 
+
+    def recv_message(self, ):  # 接收信息
+        # 设置文本框可编辑
+        self.scr.config(state=NORMAL)
+        # 获取当前光标行和列
+        l = self.scr.index('insert')
         # 插入信息
-        text.insert(END, time.ctime()+":\n")
-        text.tag_add('tag2', l, l[0:-2]+".end")
-        text.tag_config('tag2', foreground='green',font=("隶书", 13))
-        text.insert(END, "  "+text2.get("1.0", END))
+        self.scr.insert(END, time.ctime()+":\n")
+        self.scr.tag_add('tag2', l, l[0:-2]+".end")
+        self.scr.tag_config('tag2', foreground='green',font=("隶书", 13))
+        self.scr.insert(END, "  "+self.text2.get("1.0", END))
         # 显示文本框最近的信息
-        text.see(END)
+        self.scr.see(END)
         # 设置文本框不可编辑
-        text.config(state=DISABLED)
+        self.scr.config(state=DISABLED)
         # 清空发送框
-        text2.delete('1.0', 'end')
+        self.text2.delete('1.0', 'end')
+
 
     def close_window(self, name):  # 关闭窗口
-        self.dict[name].destroy()
-        del self.dict[name]
+        self.win_dict[name].destroy()
+        del self.win_dict[name]
 
     def create_win(self,name,text,fun):
         # 判断窗口是否已存在
@@ -272,7 +291,7 @@ class MainWindow:
         label = Label(self.win, image=photo)  # 图片
         label.pack()
         # 将窗口对象加入字典
-        self.dict[name] = self.win
+        self.win_dict[name] = self.win
         # 标签
         Label(self.win, text=text).place(x=50, y=40)
         # 输入框
