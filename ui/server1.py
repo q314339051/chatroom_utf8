@@ -67,6 +67,8 @@ def handle(connfd):
                     return
                 id = results[0][0]
                 dict01[id] = connfd
+                myid = request["uid"]
+                print("myid",myid)
                 # for row in results:
                 #     fname = row[0]
                 #     lname = row[1]
@@ -87,18 +89,32 @@ def handle(connfd):
             cursor.execute(sql)
             # 获取所有记录列表
             results = cursor.fetchall()
+            print("好友列表：",results)
             dict1 = {}
+            dict2 = {}
             for i in range(len(results)):
-                dict1[i] = results[i]
+
+                dict2[results[i][0]]=results[i][1]
+                dict1[i] = dict2
+                dict2 = {}
+            print("好友列表2",dict1)
             a = json.dumps(dict1).encode()
             connfd.send(a)
             # 关闭数据库连接
             db.close()
             print(dict01)
-            connfd.send("45348".encode())
+            # connfd.send("45348".encode())
         elif request["style"] == "M":
             print(request["data"])
-            dict01[request["uid"]].send(request["data"].encode())
+            # 发送给
+            uid = request["uid"]
+            # 发送的内容
+            data = request["data"]
+            dict02 = {}
+
+            dict02[myid] = data
+            a = json.dumps(dict02).encode()
+            dict01[uid].send(a)
         #     return
         # connfd.send(b"OK")
 

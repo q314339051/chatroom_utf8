@@ -3,7 +3,7 @@ import json
 from threading import Thread
 from ui import *
 
-
+msglist = []
 
 # 创建套接字
 sockfd = socket()
@@ -14,9 +14,12 @@ sockfd.connect(server_addr)
 def recv(sockfd):
     while True:
         data = sockfd.recv(1024)
-        print(data.decode())
-        recv_message()
-def send(data,user):
+        request = json.loads(data.decode())
+
+        print("收到信息",request)
+        msglist.append(request)
+        print(msglist)
+def send(data,user,):
     print(data)
     data = {"style": "M", "uid": user,"data": data}
     # sockfd.send(data.encode())

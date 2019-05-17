@@ -4,6 +4,8 @@ from client1 import *
 import tkinter.messagebox
 from tkinter import scrolledtext
 import time
+from datetime import datetime
+from threading import Thread
 
 class Application:
     def __init__(self, master):
@@ -16,7 +18,7 @@ class Application:
         self.root.resizable(0, 0)
         self.login_window()
         self.list0 = []
-
+        self.q = None
     def login_window(self):  # 创建登录窗口
         # 设置窗口背景图
         self.photo = PhotoImage(file="b.png")
@@ -145,8 +147,48 @@ class MainWindow:
         self.root.resizable(0, 0)
         self.win_dict = {}
         self.friends = data
-        print(self.friends)
+        self.thread1()
         self.start()
+
+    def thread1(self):
+        # 创建新的线程
+        t = Thread(target=self.recv1,)
+        t.setDaemon(True)  # 分支线程会随主线程退出
+        t.start()
+
+    def recv1(self):
+        while True:
+            if len(msglist) != 0:
+                Button(self.root, text="新消息",bg="red",
+                       command=self.readmsg).place(x=30, y=560)
+                time.sleep(1)
+    def readmsg(self):
+        # self.chat_window(self, name, uid)
+        for i in range(len(self.friends)):
+            print(self.friends[str(i)])
+            print(msglist)
+            for id ,name in self.friends[str(i)].items():
+                for k in msglist:
+                    if id in k:
+                        print("id:",id)
+                        print("kid:",k[id])
+                        self.chat_window(name, id)
+                        self.scr.config(state=NORMAL)
+                        # 获取当前光标行和列
+                        l = self.scr.index('insert')
+                        # 插入信息
+                        # self.scr.insert(END, time.ctime()+":\n")
+                        self.scr.insert(END, str(datetime.now())[0:19] + ":\n")
+                        self.scr.tag_add('tag2', l, l[0:-2] + ".end")
+                        self.scr.tag_config('tag2', foreground='green', font=("隶书", 13))
+                        self.scr.insert(END, "  " + k[id])
+                        # 显示文本框最近的信息
+                        self.scr.see(END)
+                        # 设置文本框不可编辑
+                        self.scr.config(state=DISABLED)
+                        # 清空发送框
+                        self.text2.delete('1.0', 'end')
+
 
 
     def start(self):
@@ -158,10 +200,12 @@ class MainWindow:
 
         treeF1 = tree.insert("", 0, text="我的好友", values=("我的好友"))
         treeF2 = tree.insert("", 1, text="最近联系", values=("最近联系"))
+        print("zhe")
         for i in range(len(self.friends)):
-            id = self.friends[str(i)][0]
-            name = self.friends[str(i)][1]
-            tree.insert(treeF1, 1, text=name, values=id)
+            print(self.friends[str(i)])
+            for id ,name in self.friends[str(i)].items():
+                print(id,name)
+                tree.insert(treeF1, 1, text=name, values=id)
         # for i in range(50):
         #      tree.insert(treeF1, 1, text=i, values=i)
         # reeF1_2 = tree.insert(treeF1, 1, text="中国吉林", values=("中国吉林"))
@@ -174,6 +218,7 @@ class MainWindow:
         Button(self.root, text="添加好友",bg="#4169E1", command=lambda:self.create_win("添加好友","输入好友账号",None)).place(x=30, y=530)
         Button(self.root, text="创建群", bg="#4169E1",command=lambda:self.create_win("创建群","输入群号",None)).place(x=110, y=530)
         Button(self.root, text="加入群", bg= "#4169E1",command=lambda:self.create_win("加入群","输入群号",None)).place(x=180, y=530)
+        print("masglist:",msglist)
         self.root.mainloop()
     def dblclickAdaptor(self, fun, **kwds):
         return lambda event, fun=fun, kwds=kwds: fun(event, **kwds)
@@ -233,7 +278,7 @@ class MainWindow:
 
         # 发送按钮
         # b = Button(self.chat, text="发送", command=lambda: self.recv_message(scr, text2,))
-        b = Button(self.chat, text="发送", command=lambda: self.recv_message6(uid))
+        b = Button(self.chat, text="发送", command=lambda: self.recv_message6(uid,name))
         b.place(in_=message_block, width=30, height=22, x=360, y=395)
         # 聊天记录按钮
         record = Button(self.chat, text="聊天记录", command=None)
@@ -245,28 +290,30 @@ class MainWindow:
         self.chat.protocol("WM_DELETE_WINDOW", lambda: self.close_window(name=name))
         self.chat.mainloop()
 
-    def recv_message6(self,uid):
-        data = self.text2.get("1.0", END)
-        send(data,uid)
-        self.recv_message()
+    def recv_message6(self,uid,name):
+        data = self.win_dict[name].text2.get("1.0", END)
+        send(data,uid,)
+        print(msglist)
+        self.recv_message(name)
 
 
-    def recv_message(self, ):  # 接收信息
+    def recv_message(self,name ):  # 接收信息
         # 设置文本框可编辑
-        self.scr.config(state=NORMAL)
+        self.win_dict[name].scr.config(state=NORMAL)
         # 获取当前光标行和列
-        l = self.scr.index('insert')
+        l = self.win_dict[name].scr.index('insert')
         # 插入信息
-        self.scr.insert(END, time.ctime()+":\n")
-        self.scr.tag_add('tag2', l, l[0:-2]+".end")
-        self.scr.tag_config('tag2', foreground='green',font=("隶书", 13))
-        self.scr.insert(END, "  "+self.text2.get("1.0", END))
+        # self.scr.insert(END, time.ctime()+":\n")
+        self.win_dict[name].scr.insert(END, str(datetime.now())[0:19]+":\n")
+        self.win_dict[name].scr.tag_add('tag2', l, l[0:-2]+".end")
+        self.win_dict[name].scr.tag_config('tag2', foreground='green',font=("隶书", 13))
+        self.win_dict[name].scr.insert(END, "  "+self.win_dict[name].text2.get("1.0", END))
         # 显示文本框最近的信息
-        self.scr.see(END)
+        self.win_dict[name].scr.see(END)
         # 设置文本框不可编辑
-        self.scr.config(state=DISABLED)
+        self.win_dict[name].scr.config(state=DISABLED)
         # 清空发送框
-        self.text2.delete('1.0', 'end')
+        self.win_dict[name].text2.delete('1.0', 'end')
 
 
     def close_window(self, name):  # 关闭窗口
