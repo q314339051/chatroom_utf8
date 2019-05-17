@@ -18,6 +18,7 @@ class Application:
         self.root.resizable(0, 0)
         self.login_window()
         self.list0 = []
+
         self.q = None
     def login_window(self):  # 创建登录窗口
         # 设置窗口背景图
@@ -148,6 +149,7 @@ class MainWindow:
         self.win_dict = {}
         self.friends = data
         self.thread1()
+        self.list888 = []
         self.start()
 
     def thread1(self):
@@ -173,21 +175,8 @@ class MainWindow:
                         print("id:",id)
                         print("kid:",k[id])
                         self.chat_window(name, id)
-                        self.scr.config(state=NORMAL)
-                        # 获取当前光标行和列
-                        l = self.scr.index('insert')
-                        # 插入信息
-                        # self.scr.insert(END, time.ctime()+":\n")
-                        self.scr.insert(END, str(datetime.now())[0:19] + ":\n")
-                        self.scr.tag_add('tag2', l, l[0:-2] + ".end")
-                        self.scr.tag_config('tag2', foreground='green', font=("隶书", 13))
-                        self.scr.insert(END, "  " + k[id])
-                        # 显示文本框最近的信息
-                        self.scr.see(END)
-                        # 设置文本框不可编辑
-                        self.scr.config(state=DISABLED)
-                        # 清空发送框
-                        self.text2.delete('1.0', 'end')
+
+
 
 
 
@@ -230,7 +219,7 @@ class MainWindow:
         uid = tree.item(item, "values")[0]
 
         if name != "我的好友" and name != "最近联系":
-            self.chat_window(name,uid)
+            self.chat_window(name)
 
         # print("you clicked on ", tree.item(item, "values"))
         # print(tree.item(item, "values")[0])
@@ -241,7 +230,7 @@ class MainWindow:
             self.win_dict[name].deiconify()
             return True
 
-    def chat_window(self, name,uid):  # 创建聊天窗口
+    def chat_window(self, name):  # 创建聊天窗口
         # 判断窗口是否已存在
         if self.win_exist(name):
             # 窗口存在则返回
@@ -265,20 +254,22 @@ class MainWindow:
         # text1 = Text(self.chat, )
         # text1.place(in_=message_block, x=10,y=10,width=380, height=250)
         # 发送信息块
-        self.text2 = Text(self.chat, )
-        self.text2.place(in_=message_block, x=10, y=290, width=380, height=100)
+        text2 = Text(self.chat, )
+        text2.place(in_=message_block, x=10, y=290, width=380, height=100)
 
         # text3 = Text(self.chat, )
         # text3.place(in_=message_block, x=400, y=10, width=170, height=400)
         # self.scroll = Scrollbar()
-        self.scr = scrolledtext.ScrolledText(self.chat, width=70, height=13, font=("隶书", 18))
-        self.scr.place(in_=message_block, x=10, y=10, width=380, height=250)  # 滚动文本框在页面的位置
+        scr = scrolledtext.ScrolledText(self.chat, width=70, height=13, font=("隶书", 18))
+        self.list888.append(scr)
+        scr.place(in_=message_block, x=10, y=10, width=380, height=250)  # 滚动文本框在页面的位置
         # 设置文本框不可编辑
-        self.scr.config(state=DISABLED)
+        scr.config(state=DISABLED)
+        print(self.list888)
 
         # 发送按钮
         # b = Button(self.chat, text="发送", command=lambda: self.recv_message(scr, text2,))
-        b = Button(self.chat, text="发送", command=lambda: self.recv_message6(uid,name))
+        b = Button(self.chat, text="发送", command=lambda: self.pp())
         b.place(in_=message_block, width=30, height=22, x=360, y=395)
         # 聊天记录按钮
         record = Button(self.chat, text="聊天记录", command=None)
@@ -289,7 +280,10 @@ class MainWindow:
         # 点击关闭按钮触发事件
         self.chat.protocol("WM_DELETE_WINDOW", lambda: self.close_window(name=name))
         self.chat.mainloop()
-
+    def pp(self):
+        print(len(self.list888))
+        self.list888[0].config(state=NORMAL)
+        self.list888[0].insert(END, str(datetime.now())[0:19] + ":\n")
     def recv_message6(self,uid,name):
         data = self.win_dict[name].text2.get("1.0", END)
         send(data,uid,)
