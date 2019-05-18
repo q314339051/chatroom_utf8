@@ -13,6 +13,7 @@ def handle(connfd):
     print("Connect from:", connfd.getpeername())
     while True:
         data = connfd.recv(1024)
+        print(data)
         request = json.loads(data.decode())
         print(request)
 
@@ -91,12 +92,14 @@ def handle(connfd):
             results = cursor.fetchall()
             print("好友列表：",results)
             dict1 = {}
-            dict2 = {}
+            # dict2 = {}
+            # for i in range(len(results)):
+            #
+            #     dict2[results[i][0]]=results[i][1]
+            #     dict1[i] = dict2
+            #     dict2 = {}
             for i in range(len(results)):
-
-                dict2[results[i][0]]=results[i][1]
-                dict1[i] = dict2
-                dict2 = {}
+                dict1[results[i][0]] = results[i][1]
             print("好友列表2",dict1)
             a = json.dumps(dict1).encode()
             connfd.send(a)
