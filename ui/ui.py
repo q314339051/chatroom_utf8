@@ -147,7 +147,7 @@ class MainWindow:
         # 窗口大小
         self.root.geometry("260x600+900+40")
         # 设置窗口标题
-        self.root.title("主窗口")
+        self.root.title("--联系人")
         # 设置窗口大小固定
         self.root.resizable(0, 0)
         self.win_dict = {}
