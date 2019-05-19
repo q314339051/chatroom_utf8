@@ -95,7 +95,7 @@ class Application:
         self.q = Client()
         if passsword2 == None:
             data = self.q.login(user, passsword1, passsword2, name)
-            if data :
+            if data:
                 print(data)
                 # 登录成功
                 self.login_successfully(data)
@@ -188,7 +188,7 @@ class MainWindow:
         a = Frame(self.root, width=500, height=600, bg= "#D3D3D3")
         a.pack()
 
-        tree = ttk.Treeview(self.root, show="tree")
+        tree = ttk.Treeview(self.root, show="tree",)
         tree.place(in_=a, x=15, y=20, width=230, height=500)
 
         treeF1 = tree.insert("", 0, text="我的好友", values=("我的好友"))
@@ -196,6 +196,7 @@ class MainWindow:
 
         for id, name in self.friends.items():
             tree.insert(treeF1, 1, text=name, values=id,)
+            # tree.children
         tree.bind("<Double-1>", self.dblclickAdaptor(self.dblclick, tree=tree))
 
         Button(self.root, text="添加好友",bg="#4169E1", command=lambda:self.create_win("添加好友","输入好友账号",None)).place(x=30, y=530)
