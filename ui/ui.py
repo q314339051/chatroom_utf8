@@ -298,11 +298,15 @@ class MainWindow:
         if num == 0:
             text1.tag_add('tag1', l, l[0:-2]+".end")
             text1.tag_config('tag1', foreground='green',font=("隶书", 13))
+            text1.insert(END, "  " + msg)
         elif num == 1:
-            text1.tag_add('tag2', l, l[0:-2] + ".end")
-            text1.tag_config('tag2', foreground='blue', font=("隶书", 13))
-        text1.insert(END, "  " + msg)
 
+            text1.tag_add('tag2', l, l[0:-2] + ".end")
+            text1.tag_config('tag2', foreground='blue',justify=RIGHT, font=("隶书", 13))
+            l = text1.index('insert')
+            text1.insert(END, msg)
+            text1.tag_add('tag22', l, l[0:-2] + ".end")
+            text1.tag_config('tag22',  justify=RIGHT)
         # # 清空发送框
         # text2.delete('1.0', 'end')
         # 显示文本框最近的信息

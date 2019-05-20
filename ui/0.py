@@ -1,49 +1,41 @@
-# -*- coding: UTF-8 -*-
-# 获取ODBC数据源列表
+"""
 from tkinter import *
-from tkinter import ttk
-import win32api, win32con
 
 
-def GetODBCdsn():
-    key = win32api.RegOpenKey(win32con.HKEY_CURRENT_USER,
-                              'SOFTWARE\\ODBC\\ODBC.INI\\ODBC Data Sources', 0, win32con.KEY_ALL_ACCESS)
-    # print(key)
-    # print(win32api.RegQueryValue(key,''))
-    # print('返回项的子项数目、项值数目，以及最后一次修改时间',win32api.RegQueryInfoKey(key))
-    subitem, item, opdate = win32api.RegQueryInfoKey(key)
-    dsnlist = []
-    for i in range(item):
-        print('---', win32api.RegEnumValue(key, i))
-        dsnName, dsnObject, dsnType = win32api.RegEnumValue(key, i)
-        dsnlist.append(dsnName)
-    # print(dir(win32api))
-    win32api.RegCloseKey(key)
-    return dsnlist
+def rtnkey(event=None):
+    print(e.get())
 
 
-class MFrame(Frame):
-    def __init__(self, master=None, cnf={}, **kw):
-        self.master = master
-        self.master.title('获取用户定义的数据源')
-        self.combo = ttk.Combobox(self.master)
-        self.combo.config(state="readonly")
-        self.combo.pack(side=TOP, fill='x', expand=False)
-        self.combo.update_idletasks()
-        comlist = GetODBCdsn()
-        self.combo['values'] = comlist
+root = Tk()
+e = StringVar()
+entry = Entry(root, validate='key', textvariable=e, width=50)
+entry.pack()
+entry.bind("<Double-Button-1>", rtnkey)
+root.title('测试回车获取文本框内容')
+root.mainloop()
+"""
+from tkinter import *
+from tkinter import scrolledtext
 
+def rtnkey(event=None):
+    print(666)
+root = Tk()
+root.geometry("260x600+900+40")
+text1 = scrolledtext.ScrolledText(root, width=70, height=13, )
+text1.place( x=10, y=10, width=240, height=500)
+text1.config(state=DISABLED)
 
-def test():
-    GetODBCdsn()
-
-
-def main():
-    root = Tk()
-    mf = MFrame(root)
-    root.mainloop()
-
-
-if __name__ == "__main__":
-    # test()
-    main()
+text2 = Text(root,font=("隶书", 18))
+text2.place(in_=text1, x=5, y=5, width=210, height=50)
+text2.insert(END, "pius")
+text2.config(state=DISABLED)
+text2.bind("<Double-Button-1>", rtnkey)
+y = 5
+for i in range(20):
+    text3 = Text(root,font=("隶书", 18))
+    text3.place(in_=text1, x=5, y=y, width=210, height=50)
+    text3.insert(END, "pius"+"(在线)")
+    text3.config(state=DISABLED)
+    text3.bind("<Double-Button-1>", rtnkey)
+    y += 55
+root.mainloop()
