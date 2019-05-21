@@ -98,7 +98,7 @@ class Application:
             if data:
                 print(data)
                 # 登录成功
-                self.login_successfully(data)
+                self.login_successfully(user,data)
             else:
                 self.messagebox("账号或密码不正确")
 
@@ -121,7 +121,7 @@ class Application:
 
     def messagebox(self,msg):  # 弹窗提示
         tkinter.messagebox.showinfo(title='提示', message=msg)
-    def login_successfully(self,data):
+    def login_successfully(self,user,data):
         # 登录成功
         Message(self.root, text='登录成功，正在跳转，请稍候...', ).place(x=10, y=130)
         # 更新窗口
@@ -131,7 +131,7 @@ class Application:
         self.root.destroy()
 
         # 跳转到主窗口
-        MainWindow(self.q,self.root,data)
+        MainWindow(self.q,self.root,user,data)
 
     def registered_successfully(self):
         # 注册成功
@@ -139,9 +139,11 @@ class Application:
 
 
 class MainWindow:
-    def __init__(self, q,master,data):
+    def __init__(self, q,master,user,data):
         self.root = master
         self.q = q
+        # self.myuid = user
+        # self.myname = data[user]
         # 创建主窗口
         self.root = Tk()
         # 窗口大小
